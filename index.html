@@ -74,7 +74,8 @@ function frameSetup(width, height, pixelFormat)
         "varying highp vec2 vTextureCoord;",
         "void main(void) {",
         " gl_Position = aVertexPosition;",
-        " vTextureCoord = aTextureCoord;", "}"].join("\n");
+        " vTextureCoord = aTextureCoord;",
+        "}"].join("\n");
 
     var vertexShader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vertexShader, vertexShaderSource);
@@ -92,8 +93,10 @@ function frameSetup(width, height, pixelFormat)
         " 1.1643828125, -.39176171875, -.81296875, .52959375,",
         " 1.1643828125, 2.017234375, 0, -1.081390625,",
         " 0, 0, 0, 1",
-        ");", "void main(void) {",
-        " gl_FragColor = vec4( texture2D(YTexture, vTextureCoord).x, texture2D(UTexture, vTextureCoord).x, texture2D(VTexture, vTextureCoord).x, 1) * YUV2RGB;", "}"].join("\n");
+        ");",
+        "void main(void) {",
+        " gl_FragColor = vec4( texture2D(YTexture, vTextureCoord).x, texture2D(UTexture, vTextureCoord).x, texture2D(VTexture, vTextureCoord).x, 1) * YUV2RGB;",
+        "}"].join("\n");
         
     var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(fragmentShader, fragmentShaderSource);
