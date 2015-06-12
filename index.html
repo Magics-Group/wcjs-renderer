@@ -3,7 +3,6 @@
 body,html{width: 100%; height: 100%;padding: 0px;margin:0px;}
 </style>
 <script>
-var gl;
 
 var vlcPlayer;
 
@@ -44,8 +43,10 @@ function glCanvas()
 }
 
 var canvas, y, u, v;
-function render( videoFrame )
+function render(canvas, videoFrame)
 {
+    var gl = canvas.gl;
+
     var len = videoFrame.length;
 
     y.fill(videoFrame.subarray(0, videoFrame.uOffset));
@@ -59,8 +60,7 @@ function frameSetup(canvas, width, height, pixelFormat)
 {
     console.log(width, height, pixelFormat);
 
-    vlcPlayer.onFrameReady = render;
-
+    var gl = canvas.gl;
     var program = canvas.I420Program;
 
     y = new Texture(gl, width, height);
@@ -74,7 +74,10 @@ function frameSetup(canvas, width, height, pixelFormat)
 
 function setupCanvas(canvas)
 {
-    gl = canvas.getContext("webgl");
+    canvas.gl = canvas.getContext("webgl");
+    var gl = canvas.gl;
+    canvas.I420Program = gl.createProgram();
+    var program = canvas.I420Program;
 
     var vertexShaderSource = [
         "attribute highp vec4 aVertexPosition;",
@@ -109,9 +112,6 @@ function setupCanvas(canvas)
     var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(fragmentShader, fragmentShaderSource);
     gl.compileShader(fragmentShader);
-
-    canvas.I420Program = gl.createProgram();
-    var program = canvas.I420Program;
 
     gl.attachShader(program, vertexShader); 
     gl.attachShader(program, fragmentShader);
@@ -155,6 +155,11 @@ function init()
     vlcPlayer.onFrameSetup =
         function(width, height, pixelFormat) {
             frameSetup(glCanvas(), width, height, pixelFormat);
+        };
+
+    vlcPlayer.onFrameReady =
+        function(videoFrame) {
+            render(glCanvas(), videoFrame);
         };
 
     vlcPlayer.play(process.env.VIDEO || "rtmp://video1.earthcam.com:1935/earthcamtv/Stream1");
