@@ -61,11 +61,19 @@ function frameSetup(width, height, pixelFormat)
     console.log( width, height, pixelFormat );
     canvas = glCanvas();
 
-    canvas.width = width;
-    canvas.height = height; 
-    
     vlcPlayer.onFrameReady = render;
 
+    y = new Texture(gl, width, height);
+    u = new Texture(gl, width >> 1, height >> 1);
+    v = new Texture(gl, width >> 1, height >> 1);
+
+    y.bind(0, program, "YTexture");
+    u.bind(1, program, "UTexture");
+    v.bind(2, program, "VTexture");
+}
+
+function setupCanvas(canvas)
+{
     gl = canvas.getContext("webgl");
 
     var vertexShaderSource = [
@@ -131,24 +139,18 @@ function frameSetup(width, height, pixelFormat)
                   new Float32Array([1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0]),
                   gl.STATIC_DRAW);
 
-    y = new Texture(gl, width, height);
-    u = new Texture(gl, width >> 1, height >> 1);
-    v = new Texture(gl, width >> 1, height >> 1);
-
     gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer);
     gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
     gl.vertexAttribPointer(textureCoordAttribute, 2, gl.FLOAT, false, 0, 0);
-    
-    y.bind(0, program, "YTexture");
-    u.bind(1, program, "UTexture");
-    v.bind(2, program, "VTexture"); 
 }
 
 function init()
 {
     var wcAddon = require("webchimera.js");
+
+    setupCanvas(glCanvas());
 
     vlcPlayer = wcAddon.createPlayer();
     vlcPlayer.onFrameSetup = frameSetup;
