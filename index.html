@@ -4,8 +4,6 @@ body,html{width: 100%; height: 100%;padding: 0px;margin:0px;}
 </style>
 <script>
 
-var vlcPlayer;
-
 function Texture(gl, width, height)
 {
     this.gl = gl;
@@ -42,34 +40,34 @@ function glCanvas()
     return document.getElementById("glCanvas");
 }
 
-var canvas, y, u, v;
 function render(canvas, videoFrame)
 {
     var gl = canvas.gl;
 
     var len = videoFrame.length;
 
-    y.fill(videoFrame.subarray(0, videoFrame.uOffset));
-    u.fill(videoFrame.subarray(videoFrame.uOffset, videoFrame.vOffset));
-    v.fill(videoFrame.subarray(videoFrame.vOffset, len));
+    videoFrame.y.fill(videoFrame.subarray(0, videoFrame.uOffset));
+    videoFrame.u.fill(videoFrame.subarray(videoFrame.uOffset, videoFrame.vOffset));
+    videoFrame.v.fill(videoFrame.subarray(videoFrame.vOffset, len));
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 
-function frameSetup(canvas, width, height, pixelFormat)
+function frameSetup(canvas, width, height, pixelFormat, videoFrame)
 {
     console.log(width, height, pixelFormat);
 
     var gl = canvas.gl;
     var program = canvas.I420Program;
 
-    y = new Texture(gl, width, height);
-    u = new Texture(gl, width >> 1, height >> 1);
-    v = new Texture(gl, width >> 1, height >> 1);
+    videoFrame.y = new Texture(gl, width, height);
+    videoFrame.u = new Texture(gl, width >> 1, height >> 1);
+    videoFrame.v = new Texture(gl, width >> 1, height >> 1);
 
-    y.bind(0, program, "YTexture");
-    u.bind(1, program, "UTexture");
-    v.bind(2, program, "VTexture");
+    videoFrame.y.bind(0, program, "YTexture");
+    videoFrame.u.bind(1, program, "UTexture");
+    videoFrame.v.bind(2, program, "VTexture");
+
 }
 
 function setupCanvas(canvas)
@@ -150,11 +148,11 @@ function init()
 
     setupCanvas(glCanvas());
 
-    vlcPlayer = wcAddon.createPlayer();
+    var vlcPlayer = wcAddon.createPlayer();
 
     vlcPlayer.onFrameSetup =
-        function(width, height, pixelFormat) {
-            frameSetup(glCanvas(), width, height, pixelFormat);
+        function(width, height, pixelFormat, videoFrame) {
+            frameSetup(glCanvas(), width, height, pixelFormat, videoFrame);
         };
 
     vlcPlayer.onFrameReady =
