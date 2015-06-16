@@ -1,15 +1,7 @@
 {
-    "name": "Ugly",
-    "description": "basic demo for WebChimera.js",
+    "name": "wcjs-renderer",
     "version": "0.1.0",
-    "private": true,
-    "main": "app://host/index.html",
     "dependencies": {
         "webchimera.js": "*"
     },
-    "cmake-js": {
-        "runtime": "nw",
-        "runtimeVersion": "0.12.2"
-    },
-    "env": "development"
 }
