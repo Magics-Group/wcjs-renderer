@@ -60,6 +60,10 @@ function frameSetup(canvas, width, height, pixelFormat, videoFrame)
     var gl = canvas.gl;
     var program = canvas.I420Program;
 
+    canvas.width = width;
+    canvas.height = height;
+    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+
     videoFrame.y = new Texture(gl, width, height);
     videoFrame.u = new Texture(gl, width >> 1, height >> 1);
     videoFrame.v = new Texture(gl, width >> 1, height >> 1);
