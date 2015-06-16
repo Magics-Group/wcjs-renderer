@@ -1,7 +1,21 @@
 {
     "name": "wcjs-renderer",
     "description": "renderer for WebChimera.js",
-    "version": "0.1.1",
+    "version": "0.1.2",
+    "license" : "MIT",
+    "author": "Sergey Radionov <rsatom@gmail.com>",
+    "keywords": [
+        "video",
+        "renderer",
+        "webchimera",
+        "webchimera.js",
+        "vlc",
+        "libvlc"
+    ],
+    "repository": {
+        "type" : "git",
+        "url" : "https://github.com/RSATom/wcjs-renderer"
+    },
     "dependencies": {
         "webchimera.js": "*"
     }
