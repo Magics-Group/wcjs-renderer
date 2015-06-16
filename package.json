@@ -1,5 +1,6 @@
 {
     "name": "wcjs-renderer",
+    "description": "renderer for WebChimera.js",
     "version": "0.1.0",
     "dependencies": {
         "webchimera.js": "*"
