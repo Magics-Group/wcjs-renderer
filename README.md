@@ -4,6 +4,12 @@ renderer for WebChimera.js
 ### Prerequisites
 * [WebChimera.js prerequisites](https://github.com/RSATom/WebChimera.js#build-prerequisites)
 
+### Install
+
+``
+npm install wcjs-renderer
+``
+
 ### Usage example
 
 HTML:
