@@ -95,18 +95,18 @@ function setupCanvas(canvas) {
 }
 
 var init = function(canvas) {
-	var wcAddon = require("webchimera.js");
-	setupCanvas(canvas);
-	var vlc = wcAddon.createPlayer();
-	vlc.onFrameSetup =
-		function(width, height, pixelFormat, videoFrame) {
-			frameSetup(canvas, width, height, pixelFormat, videoFrame);
-		};
-	vlc.onFrameReady =
-		function(videoFrame) {
-			render(canvas, videoFrame);
-		};
-	return vlc;
+    var wcAddon = require("webchimera.js");
+    setupCanvas(canvas);
+    var vlc = wcAddon.createPlayer();
+    vlc.onFrameSetup =
+        function(width, height, pixelFormat, videoFrame) {
+            frameSetup(canvas, width, height, pixelFormat, videoFrame);
+        };
+    vlc.onFrameReady =
+        function(videoFrame) {
+            render(canvas, videoFrame);
+        };
+    return vlc;
 }
 
 var frameSetup = function(canvas, width, height, pixelFormat, videoFrame) {
@@ -125,5 +125,5 @@ var frameSetup = function(canvas, width, height, pixelFormat, videoFrame) {
 
 module.exports = {
     init: init,
-	frameSetup: frameSetup
+    frameSetup: frameSetup
 };
