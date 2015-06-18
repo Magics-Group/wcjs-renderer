@@ -32,9 +32,33 @@ function render(canvas, videoFrame) {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 
-function setupCanvas(canvas) {
-    canvas.gl = canvas.getContext("webgl");
+var renderFallback = function(canvas, videoFrame) {
+    var buf = canvas.img.data;
+    var width = videoFrame.width;
+    var height = videoFrame.height;
+    for (var i = 0; i < height; ++i) {
+        for (var j = 0; j < width; ++j) {
+            var o = (j + (width*i))*4;
+            buf[o + 0] = videoFrame[o+2];
+            buf[o + 1] = videoFrame[o+1];
+            buf[o + 2] = videoFrame[o+0];
+            buf[o + 3] = videoFrame[o+3];
+        }
+    };
+    canvas.ctx.putImageData(canvas.img, 0, 0);
+}
+
+function setupCanvas(canvas, vlc) {
+    canvas.gl = canvas.getContext("webgl"); // Comment this line out to test fallback
     var gl = canvas.gl;
+    if (! gl) {
+        console.log("Unable to initialize WebGL, falling back to canvas rendering");
+        vlc.pixelFormat = vlc.RV32;
+        canvas.ctx = canvas.getContext("2d");
+        return;
+    }
+
+    vlc.pixelFormat = vlc.I420;
     canvas.I420Program = gl.createProgram();
     var program = canvas.I420Program;
     var vertexShaderSource = [
@@ -97,28 +121,32 @@ function setupCanvas(canvas) {
 var init = function(canvas,params) {
     var wcAddon = require("webchimera.js");
     
-    if (typeof canvas === 'string') setupCanvas(window.document.querySelector(canvas));
-    else setupCanvas(canvas);
-    
     if (typeof params !== 'undefined') var vlc = wcAddon.createPlayer(params);
     else var vlc = wcAddon.createPlayer();
-    
+
+    if (typeof canvas === 'string') setupCanvas(window.document.querySelector(canvas), vlc);
+    else setupCanvas(canvas, vlc);
+
     vlc.onFrameSetup =
         function(width, height, pixelFormat, videoFrame) {
             frameSetup(canvas, width, height, pixelFormat, videoFrame);
         };
     vlc.onFrameReady =
         function(videoFrame) {
-            render(canvas, videoFrame);
+            (canvas.gl ? render : renderFallback)(canvas, videoFrame);
         };
     return vlc;
 }
 
 var frameSetup = function(canvas, width, height, pixelFormat, videoFrame) {
     var gl = canvas.gl;
-    var program = canvas.I420Program;
     canvas.width = width;
-    canvas.height = height;
+    canvas.height = height; 
+    if (! gl) {
+        canvas.img = canvas.ctx.createImageData(width, height);
+        return;
+    }
+    var program = canvas.I420Program;
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
     videoFrame.y = new Texture(gl, width, height);
     videoFrame.u = new Texture(gl, width >> 1, height >> 1);
