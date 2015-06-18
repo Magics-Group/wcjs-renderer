@@ -32,20 +32,6 @@ function render(canvas, videoFrame) {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 
-function frameSetup(canvas, width, height, pixelFormat, videoFrame) {
-    var gl = canvas.gl;
-    var program = canvas.I420Program;
-    canvas.width = width;
-    canvas.height = height;
-    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-    videoFrame.y = new Texture(gl, width, height);
-    videoFrame.u = new Texture(gl, width >> 1, height >> 1);
-    videoFrame.v = new Texture(gl, width >> 1, height >> 1);
-    videoFrame.y.bind(0, program, "YTexture");
-    videoFrame.u.bind(1, program, "UTexture");
-    videoFrame.v.bind(2, program, "VTexture");
-}
-
 function setupCanvas(canvas) {
     canvas.gl = canvas.getContext("webgl");
     var gl = canvas.gl;
@@ -108,19 +94,36 @@ function setupCanvas(canvas) {
     gl.vertexAttribPointer(textureCoordAttribute, 2, gl.FLOAT, false, 0, 0);
 }
 
+var init = function(canvas) {
+	var wcAddon = require("webchimera.js");
+	setupCanvas(canvas);
+	var vlc = wcAddon.createPlayer();
+	vlc.onFrameSetup =
+		function(width, height, pixelFormat, videoFrame) {
+			frameSetup(canvas, width, height, pixelFormat, videoFrame);
+		};
+	vlc.onFrameReady =
+		function(videoFrame) {
+			render(canvas, videoFrame);
+		};
+	return vlc;
+}
+
+var frameSetup = function(canvas, width, height, pixelFormat, videoFrame) {
+    var gl = canvas.gl;
+    var program = canvas.I420Program;
+    canvas.width = width;
+    canvas.height = height;
+    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+    videoFrame.y = new Texture(gl, width, height);
+    videoFrame.u = new Texture(gl, width >> 1, height >> 1);
+    videoFrame.v = new Texture(gl, width >> 1, height >> 1);
+    videoFrame.y.bind(0, program, "YTexture");
+    videoFrame.u.bind(1, program, "UTexture");
+    videoFrame.v.bind(2, program, "VTexture");
+}
+
 module.exports = {
-    init: function(canvas) {
-        var wcAddon = require("webchimera.js");
-        setupCanvas(canvas);
-        var vlc = wcAddon.createPlayer();
-        vlc.onFrameSetup =
-            function(width, height, pixelFormat, videoFrame) {
-                frameSetup(canvas, width, height, pixelFormat, videoFrame);
-            };
-        vlc.onFrameReady =
-            function(videoFrame) {
-                render(canvas, videoFrame);
-            };
-        return vlc;
-    }
+    init: init,
+	frameSetup: frameSetup
 };
