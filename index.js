@@ -94,10 +94,15 @@ function setupCanvas(canvas) {
     gl.vertexAttribPointer(textureCoordAttribute, 2, gl.FLOAT, false, 0, 0);
 }
 
-var init = function(canvas) {
+var init = function(canvas,params) {
     var wcAddon = require("webchimera.js");
-    setupCanvas(canvas);
-    var vlc = wcAddon.createPlayer();
+    
+    if (typeof canvas === 'string') setupCanvas(window.document.querySelector(canvas));
+    else setupCanvas(canvas);
+    
+    if (typeof params !== 'undefined') var vlc = wcAddon.createPlayer(params);
+    else var vlc = wcAddon.createPlayer();
+    
     vlc.onFrameSetup =
         function(width, height, pixelFormat, videoFrame) {
             frameSetup(canvas, width, height, pixelFormat, videoFrame);
