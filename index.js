@@ -48,11 +48,11 @@ var renderFallback = function(canvas, videoFrame) {
     canvas.ctx.putImageData(canvas.img, 0, 0);
 }
 
-function setupCanvas(canvas, vlc) {
+function setupCanvas(canvas, vlc, fallbackRenderer) {
     canvas.gl = canvas.getContext("webgl"); // Comment this line out to test fallback
     var gl = canvas.gl;
-    if (! gl) {
-        console.log("Unable to initialize WebGL, falling back to canvas rendering");
+    if (!gl || fallbackRenderer) {
+        console.log(fallbackRenderer ? "Fallback renderer forced, not using WebGL" : "Unable to initialize WebGL, falling back to canvas rendering");
         vlc.pixelFormat = vlc.RV32;
         canvas.ctx = canvas.getContext("2d");
         return;
@@ -118,14 +118,14 @@ function setupCanvas(canvas, vlc) {
     gl.vertexAttribPointer(textureCoordAttribute, 2, gl.FLOAT, false, 0, 0);
 }
 
-var init = function(canvas,params) {
+var init = function(canvas,params,fallbackRenderer) {
     var wcAddon = require("webchimera.js");
     
     if (typeof params !== 'undefined') var vlc = wcAddon.createPlayer(params);
     else var vlc = wcAddon.createPlayer();
 
-    if (typeof canvas === 'string') setupCanvas(window.document.querySelector(canvas), vlc);
-    else setupCanvas(canvas, vlc);
+    if (typeof canvas === 'string') setupCanvas(window.document.querySelector(canvas), vlc, fallbackRenderer);
+    else setupCanvas(canvas, vlc, fallbackRenderer);
 
     vlc.onFrameSetup =
         function(width, height, pixelFormat, videoFrame) {
