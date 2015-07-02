@@ -55,6 +55,7 @@ function setupCanvas(canvas, vlc, fallbackRenderer) {
         console.log(fallbackRenderer ? "Fallback renderer forced, not using WebGL" : "Unable to initialize WebGL, falling back to canvas rendering");
         vlc.pixelFormat = vlc.RV32;
         canvas.ctx = canvas.getContext("2d");
+        delete canvas.gl; // in case of fallback renderer
         return;
     }
 
