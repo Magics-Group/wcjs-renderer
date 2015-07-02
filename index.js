@@ -49,7 +49,7 @@ var renderFallback = function(canvas, videoFrame) {
 }
 
 function setupCanvas(canvas, vlc, fallbackRenderer) {
-    canvas.gl = canvas.getContext("webgl"); // Comment this line out to test fallback
+    if (!fallbackRenderer) canvas.gl = canvas.getContext("webgl"); // Comment this line out to test fallback
     var gl = canvas.gl;
     if (!gl || fallbackRenderer) {
         console.log(fallbackRenderer ? "Fallback renderer forced, not using WebGL" : "Unable to initialize WebGL, falling back to canvas rendering");
