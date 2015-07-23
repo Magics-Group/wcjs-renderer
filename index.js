@@ -131,6 +131,25 @@ var init = function(canvas,params,fallbackRenderer) {
     vlc.onFrameSetup =
         function(width, height, pixelFormat, videoFrame) {
             frameSetup(canvas, width, height, pixelFormat, videoFrame);
+
+            var ext = canvas.gl.getExtension("WEBGL_lose_context"); 
+
+            canvas.addEventListener("webglcontextlost", function(e) {
+                return function(event) {
+                    event.preventDefault();
+                    console.log("webgl context lost: restoring after 1 second");
+                    setTimeout(function() { e.restoreContext(); },1000);
+                }
+            }(ext), false);
+
+            canvas.addEventListener("webglcontextrestored", function(w,h,p,v) {
+                return function(event) {
+                    setupCanvas(canvas, vlc);
+                    frameSetup(canvas, w, h, p, v);
+                    console.log("webgl context restored");
+                }
+            }(width,height,pixelFormat,videoFrame), false);
+
         };
     vlc.onFrameReady =
         function(videoFrame) {
