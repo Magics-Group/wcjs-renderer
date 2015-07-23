@@ -158,7 +158,7 @@ var init = function(canvas,params,fallbackRenderer) {
     return vlc;
 }
 
-var frameSetup = function(canvas, width, height, pixelFormat, videoFrame) {
+function frameSetup(canvas, width, height, pixelFormat, videoFrame) {
     var gl = canvas.gl;
     canvas.width = width;
     canvas.height = height; 
@@ -177,6 +177,5 @@ var frameSetup = function(canvas, width, height, pixelFormat, videoFrame) {
 }
 
 module.exports = {
-    init: init,
-    frameSetup: frameSetup
+    init: init
 };
