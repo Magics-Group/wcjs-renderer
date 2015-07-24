@@ -139,38 +139,38 @@ function frameSetup(canvas, width, height, pixelFormat, videoFrame) {
 
 module.exports = {
     init: function(canvas,params,fallbackRenderer) {
-		var wcAddon = require("webchimera.js");
-		
-		if (typeof params !== 'undefined') var vlc = wcAddon.createPlayer(params);
-		else var vlc = wcAddon.createPlayer();
-	
-		if (typeof canvas === 'string') setupCanvas(window.document.querySelector(canvas), vlc, fallbackRenderer);
-		else setupCanvas(canvas, vlc, fallbackRenderer);
-	
-		vlc.onFrameSetup =
-			function(width, height, pixelFormat, videoFrame) {
-				frameSetup(canvas, width, height, pixelFormat, videoFrame);
-	
-				canvas.addEventListener("webglcontextlost", function(e) {
-					return function(event) {
-						event.preventDefault();
-						console.log("webgl context lost");
-					}
-				}(ext), false);
-	
-				canvas.addEventListener("webglcontextrestored", function(w,h,p,v) {
-					return function(event) {
-						setupCanvas(canvas, vlc);
-						frameSetup(canvas, w, h, p, v);
-						console.log("webgl context restored");
-					}
-				}(width,height,pixelFormat,videoFrame), false);
-	
-			};
-		vlc.onFrameReady =
-			function(videoFrame) {
-				(canvas.gl ? render : renderFallback)(canvas, videoFrame);
-			};
-		return vlc;
-	}
+        var wcAddon = require("webchimera.js");
+        
+        if (typeof params !== 'undefined') var vlc = wcAddon.createPlayer(params);
+        else var vlc = wcAddon.createPlayer();
+    
+        if (typeof canvas === 'string') setupCanvas(window.document.querySelector(canvas), vlc, fallbackRenderer);
+        else setupCanvas(canvas, vlc, fallbackRenderer);
+    
+        vlc.onFrameSetup =
+            function(width, height, pixelFormat, videoFrame) {
+                frameSetup(canvas, width, height, pixelFormat, videoFrame);
+    
+                canvas.addEventListener("webglcontextlost", function(e) {
+                    return function(event) {
+                        event.preventDefault();
+                        console.log("webgl context lost");
+                    }
+                }(ext), false);
+    
+                canvas.addEventListener("webglcontextrestored", function(w,h,p,v) {
+                    return function(event) {
+                        setupCanvas(canvas, vlc);
+                        frameSetup(canvas, w, h, p, v);
+                        console.log("webgl context restored");
+                    }
+                }(width,height,pixelFormat,videoFrame), false);
+    
+            };
+        vlc.onFrameReady =
+            function(videoFrame) {
+                (canvas.gl ? render : renderFallback)(canvas, videoFrame);
+            };
+        return vlc;
+    }
 };
