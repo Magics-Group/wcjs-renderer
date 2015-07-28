@@ -151,12 +151,10 @@ module.exports = {
             function(width, height, pixelFormat, videoFrame) {
                 frameSetup(canvas, width, height, pixelFormat, videoFrame);
     
-                canvas.addEventListener("webglcontextlost", function(e) {
-                    return function(event) {
-                        event.preventDefault();
-                        console.log("webgl context lost");
-                    }
-                }(ext), false);
+                canvas.addEventListener("webglcontextlost", function(event) {
+					event.preventDefault();
+					console.log("webgl context lost");
+                }, false);
     
                 canvas.addEventListener("webglcontextrestored", function(w,h,p,v) {
                     return function(event) {
