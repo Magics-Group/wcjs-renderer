@@ -1,7 +1,7 @@
 {
     "name": "wcjs-renderer",
     "description": "renderer for WebChimera.js",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "license" : "MIT",
     "author": "Sergey Radionov <rsatom@gmail.com>",
     "keywords": [
