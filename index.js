@@ -23,7 +23,8 @@ Texture.prototype.fill = function (data) {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, this.width, this.height, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, data);
 }
 
-function render(canvas, videoFrame) {
+function render(canvas, videoFrame, vlc) {
+    if (!vlc.playing) return;
     var gl = canvas.gl;
     var len = videoFrame.length;
     videoFrame.y.fill(videoFrame.subarray(0, videoFrame.uOffset));
@@ -167,7 +168,7 @@ module.exports = {
             };
         vlc.onFrameReady =
             function(videoFrame) {
-                (canvas.gl ? render : renderFallback)(canvas, videoFrame);
+                (canvas.gl ? render : renderFallback)(canvas, videoFrame, vlc);
             };
         return vlc;
     }
