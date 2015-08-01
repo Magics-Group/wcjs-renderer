@@ -142,6 +142,8 @@ module.exports = {
     init: function(canvas,params,fallbackRenderer) {
         var wcAddon = require("webchimera.js");
         
+        this._canvas = canvas;
+        
         if (typeof params !== 'undefined') var vlc = wcAddon.createPlayer(params);
         else var vlc = wcAddon.createPlayer();
     
@@ -153,8 +155,8 @@ module.exports = {
                 frameSetup(canvas, width, height, pixelFormat, videoFrame);
     
                 canvas.addEventListener("webglcontextlost", function(event) {
-					event.preventDefault();
-					console.log("webgl context lost");
+                    event.preventDefault();
+                    console.log("webgl context lost");
                 }, false);
     
                 canvas.addEventListener("webglcontextrestored", function(w,h,p,v) {
@@ -166,10 +168,31 @@ module.exports = {
                 }(width,height,pixelFormat,videoFrame), false);
     
             };
+        setFrame = this;
         vlc.onFrameReady =
             function(videoFrame) {
                 (canvas.gl ? render : renderFallback)(canvas, videoFrame, vlc);
+                setFrame._lastFrame = videoFrame;
             };
         return vlc;
-    }
+    },
+
+    clearCanvas: function() {
+        if (this._lastFrame) {
+            var gl = this._canvas.gl,
+                arr1 = new Uint8Array(this._lastFrame.uOffset),
+                arr2 = new Uint8Array(this._lastFrame.vOffset - this._lastFrame.uOffset);
+                
+            for (var i = 0; i < arr2.length; ++i) arr2[i] = 128;
+
+            this._lastFrame.y.fill(arr1);
+            this._lastFrame.u.fill(arr2);
+            this._lastFrame.v.fill(arr2);
+
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        }
+    },
+    
+    _lastFrame: false,
+    _canvas: false
 };
