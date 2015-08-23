@@ -27,9 +27,9 @@ function render(canvas, videoFrame, vlc) {
     if (!vlc.playing) return;
     var gl = canvas.gl;
     var len = videoFrame.length;
-    videoFrame.y.fill(videoFrame.subarray(0, videoFrame.uOffset));
-    videoFrame.u.fill(videoFrame.subarray(videoFrame.uOffset, videoFrame.vOffset));
-    videoFrame.v.fill(videoFrame.subarray(videoFrame.vOffset, len));
+    gl.y.fill(videoFrame.subarray(0, videoFrame.uOffset));
+    gl.u.fill(videoFrame.subarray(videoFrame.uOffset, videoFrame.vOffset));
+    gl.v.fill(videoFrame.subarray(videoFrame.vOffset, len));
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 
@@ -120,7 +120,7 @@ function setupCanvas(canvas, vlc, fallbackRenderer) {
     gl.vertexAttribPointer(textureCoordAttribute, 2, gl.FLOAT, false, 0, 0);
 }
 
-function frameSetup(canvas, width, height, pixelFormat, videoFrame) {
+function frameSetup(canvas, width, height, pixelFormat) {
     var gl = canvas.gl;
     canvas.width = width;
     canvas.height = height; 
@@ -130,12 +130,12 @@ function frameSetup(canvas, width, height, pixelFormat, videoFrame) {
     }
     var program = canvas.I420Program;
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-    videoFrame.y = new Texture(gl, width, height);
-    videoFrame.u = new Texture(gl, width >> 1, height >> 1);
-    videoFrame.v = new Texture(gl, width >> 1, height >> 1);
-    videoFrame.y.bind(0, program, "YTexture");
-    videoFrame.u.bind(1, program, "UTexture");
-    videoFrame.v.bind(2, program, "VTexture");
+    gl.y = new Texture(gl, width, height);
+    gl.u = new Texture(gl, width >> 1, height >> 1);
+    gl.v = new Texture(gl, width >> 1, height >> 1);
+    gl.y.bind(0, program, "YTexture");
+    gl.u.bind(1, program, "UTexture");
+    gl.v.bind(2, program, "VTexture");
 }
 
 module.exports = {
@@ -151,8 +151,8 @@ module.exports = {
         else setupCanvas(canvas, vlc, fallbackRenderer);
     
         vlc.onFrameSetup =
-            function(width, height, pixelFormat, videoFrame) {
-                frameSetup(canvas, width, height, pixelFormat, videoFrame);
+            function(width, height, pixelFormat) {
+                frameSetup(canvas, width, height, pixelFormat);
     
                 canvas.addEventListener("webglcontextlost",
                     function(event) {
@@ -161,13 +161,13 @@ module.exports = {
                     }, false);
     
                 canvas.addEventListener("webglcontextrestored",
-                    function(w,h,p,v) {
+                    function(w,h,p) {
                         return function(event) {
                             setupCanvas(canvas, vlc);
-                            frameSetup(canvas, w, h, p, v);
+                            frameSetup(canvas, w, h, p);
                             console.log("webgl context restored");
                         }
-                    }(width,height,pixelFormat,videoFrame), false);
+                    }(width,height,pixelFormat), false);
     
             };
         setFrame = this;
@@ -187,9 +187,9 @@ module.exports = {
                 
             for (var i = 0; i < arr2.length; ++i) arr2[i] = 128;
 
-            this._lastFrame.y.fill(arr1);
-            this._lastFrame.u.fill(arr2);
-            this._lastFrame.v.fill(arr2);
+            gl.y.fill(arr1);
+            gl.u.fill(arr2);
+            gl.v.fill(arr2);
 
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         }
