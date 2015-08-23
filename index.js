@@ -1,6 +1,5 @@
-function Texture(gl, width, height) {
+function Texture(gl) {
     this.gl = gl;
-    this.width = width; this.height = height;
     this.texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, this.texture);
 
@@ -16,19 +15,22 @@ Texture.prototype.bind = function (n, program, name) {
     gl.bindTexture(gl.TEXTURE_2D, this.texture);
     gl.uniform1i(gl.getUniformLocation(program, name), n);
 }
-Texture.prototype.fill = function (data) {
+Texture.prototype.fill = function (width, height, data) {
     var gl = this.gl;
     gl.bindTexture(gl.TEXTURE_2D, this.texture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, this.width, this.height, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, data);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, width, height, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, data);
 }
 
 function render(canvas, videoFrame, vlc) {
     if (!vlc.playing) return;
     var gl = canvas.gl;
     var len = videoFrame.length;
-    gl.y.fill(videoFrame.subarray(0, videoFrame.uOffset));
-    gl.u.fill(videoFrame.subarray(videoFrame.uOffset, videoFrame.vOffset));
-    gl.v.fill(videoFrame.subarray(videoFrame.vOffset, len));
+    gl.y.fill(videoFrame.width, videoFrame.height,
+              videoFrame.subarray(0, videoFrame.uOffset));
+    gl.u.fill(videoFrame.width >> 1, videoFrame.height >> 1,
+              videoFrame.subarray(videoFrame.uOffset, videoFrame.vOffset));
+    gl.v.fill(videoFrame.width >> 1, videoFrame.height >> 1,
+              videoFrame.subarray(videoFrame.vOffset, len));
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 
@@ -129,9 +131,9 @@ function frameSetup(canvas, width, height, pixelFormat) {
     }
     var program = canvas.I420Program;
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-    gl.y = new Texture(gl, width, height);
-    gl.u = new Texture(gl, width >> 1, height >> 1);
-    gl.v = new Texture(gl, width >> 1, height >> 1);
+    gl.y = new Texture(gl);
+    gl.u = new Texture(gl);
+    gl.v = new Texture(gl);
     gl.y.bind(0, program, "YTexture");
     gl.u.bind(1, program, "UTexture");
     gl.v.bind(2, program, "VTexture");
@@ -168,31 +170,28 @@ module.exports = {
                     }(width,height,pixelFormat), false);
     
             };
-        setFrame = this;
+
         vlc.onFrameReady =
             function(videoFrame) {
                 (canvas.gl ? render : renderFallback)(canvas, videoFrame, vlc);
-                setFrame._lastFrame = videoFrame;
             };
         return vlc;
     },
 
     clearCanvas: function() {
-        if (this._lastFrame) {
-            var gl = this._canvas.gl,
-                arr1 = new Uint8Array(this._lastFrame.uOffset),
-                arr2 = new Uint8Array(this._lastFrame.vOffset - this._lastFrame.uOffset);
-                
-            for (var i = 0; i < arr2.length; ++i) arr2[i] = 128;
+        var gl = this._canvas.gl,
+            arr1 = new Uint8Array(1),
+            arr2 = new Uint8Array(1);
 
-            gl.y.fill(arr1);
-            gl.u.fill(arr2);
-            gl.v.fill(arr2);
+        arr1[0] = 0;
+        arr2[0] = 128;
 
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-        }
+        gl.y.fill(1, 1, arr1);
+        gl.u.fill(1, 1, arr2);
+        gl.v.fill(1, 1, arr2);
+
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     },
     
-    _lastFrame: false,
     _canvas: false
 };
