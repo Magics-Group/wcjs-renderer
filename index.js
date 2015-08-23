@@ -117,6 +117,13 @@ function setupCanvas(canvas, vlc, fallbackRenderer) {
                   new Float32Array([1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0]),
                   gl.STATIC_DRAW);
     gl.vertexAttribPointer(textureCoordAttribute, 2, gl.FLOAT, false, 0, 0);
+
+    gl.y = new Texture(gl);
+    gl.u = new Texture(gl);
+    gl.v = new Texture(gl);
+    gl.y.bind(0, program, "YTexture");
+    gl.u.bind(1, program, "UTexture");
+    gl.v.bind(2, program, "VTexture");
 }
 
 function frameSetup(canvas, width, height, pixelFormat) {
@@ -127,14 +134,7 @@ function frameSetup(canvas, width, height, pixelFormat) {
         canvas.img = canvas.ctx.createImageData(width, height);
         return;
     }
-    var program = canvas.I420Program;
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-    gl.y = new Texture(gl);
-    gl.u = new Texture(gl);
-    gl.v = new Texture(gl);
-    gl.y.bind(0, program, "YTexture");
-    gl.u.bind(1, program, "UTexture");
-    gl.v.bind(2, program, "VTexture");
 }
 
 module.exports = {
