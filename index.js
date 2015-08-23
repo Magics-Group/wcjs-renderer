@@ -138,7 +138,7 @@ function frameSetup(canvas, width, height, pixelFormat) {
 }
 
 module.exports = {
-    init: function(canvas,params,fallbackRenderer) {
+    init: function(canvas, params, fallbackRenderer) {
         var wcAddon = require("webchimera.js");
         
         this._canvas = canvas;
