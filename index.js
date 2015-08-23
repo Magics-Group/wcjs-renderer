@@ -23,13 +23,12 @@ Texture.prototype.fill = function (width, height, data) {
 
 function render(canvas, videoFrame) {
     var gl = canvas.gl;
-    var len = videoFrame.length;
     gl.y.fill(videoFrame.width, videoFrame.height,
               videoFrame.subarray(0, videoFrame.uOffset));
     gl.u.fill(videoFrame.width >> 1, videoFrame.height >> 1,
               videoFrame.subarray(videoFrame.uOffset, videoFrame.vOffset));
     gl.v.fill(videoFrame.width >> 1, videoFrame.height >> 1,
-              videoFrame.subarray(videoFrame.vOffset, len));
+              videoFrame.subarray(videoFrame.vOffset, videoFrame.length));
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 
