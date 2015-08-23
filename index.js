@@ -143,8 +143,7 @@ module.exports = {
         
         this._canvas = canvas;
         
-        if (typeof params !== 'undefined') var vlc = wcAddon.createPlayer(params);
-        else var vlc = wcAddon.createPlayer();
+        var vlc = wcAddon.createPlayer(params);
     
         if (typeof canvas === 'string') setupCanvas(window.document.querySelector(canvas), vlc, fallbackRenderer);
         else setupCanvas(canvas, vlc, fallbackRenderer);
