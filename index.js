@@ -29,7 +29,6 @@ function render(canvas, videoFrame) {
               videoFrame.subarray(videoFrame.uOffset, videoFrame.vOffset));
     gl.v.fill(videoFrame.width >> 1, videoFrame.height >> 1,
               videoFrame.subarray(videoFrame.vOffset, videoFrame.length));
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 
 var renderFallback = function(canvas, videoFrame) {
@@ -140,6 +139,8 @@ function frameSetup(canvas, width, height, pixelFormat) {
 module.exports = {
     init: function(canvas, params, fallbackRenderer) {
         var vlc = require("webchimera.js").createPlayer(params);
+
+        var drawLoop, newFrame;
     
         if(typeof canvas === 'string')
             canvas = window.document.querySelector(canvas);
@@ -152,6 +153,16 @@ module.exports = {
             function(width, height, pixelFormat) {
                 frameSetup(canvas, width, height, pixelFormat);
     
+                var draw = function() {
+                    drawLoop = window.requestAnimationFrame(function() {
+                        var gl = canvas.gl; 
+                        if (newFrame) gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+                        newFrame = false;
+                        draw();
+                    });
+                };
+                draw();
+
                 canvas.addEventListener("webglcontextlost",
                     function(event) {
                         event.preventDefault();
@@ -172,6 +183,11 @@ module.exports = {
         vlc.onFrameReady =
             function(videoFrame) {
                 (canvas.gl ? render : renderFallback)(canvas, videoFrame);
+                newFrame = true;
+            };
+        vlc.onFrameCleanup =
+            function() {
+                if (drawLoop) { window.cancelAnimationFrame(drawLoop); drawLoop = null; } 
             };
         return vlc;
     },
