@@ -124,7 +124,7 @@ function frameSetup(canvas, width, height, pixelFormat, videoFrame) {
     var gl = canvas.gl;
     canvas.width = width;
     canvas.height = height; 
-    if (! gl) {
+    if (!gl) {
         canvas.img = canvas.ctx.createImageData(width, height);
         return;
     }
@@ -154,18 +154,20 @@ module.exports = {
             function(width, height, pixelFormat, videoFrame) {
                 frameSetup(canvas, width, height, pixelFormat, videoFrame);
     
-                canvas.addEventListener("webglcontextlost", function(event) {
-                    event.preventDefault();
-                    console.log("webgl context lost");
-                }, false);
+                canvas.addEventListener("webglcontextlost",
+                    function(event) {
+                        event.preventDefault();
+                        console.log("webgl context lost");
+                    }, false);
     
-                canvas.addEventListener("webglcontextrestored", function(w,h,p,v) {
-                    return function(event) {
-                        setupCanvas(canvas, vlc);
-                        frameSetup(canvas, w, h, p, v);
-                        console.log("webgl context restored");
-                    }
-                }(width,height,pixelFormat,videoFrame), false);
+                canvas.addEventListener("webglcontextrestored",
+                    function(w,h,p,v) {
+                        return function(event) {
+                            setupCanvas(canvas, vlc);
+                            frameSetup(canvas, w, h, p, v);
+                            console.log("webgl context restored");
+                        }
+                    }(width,height,pixelFormat,videoFrame), false);
     
             };
         setFrame = this;
