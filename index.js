@@ -139,14 +139,14 @@ function frameSetup(canvas, width, height, pixelFormat) {
 
 module.exports = {
     init: function(canvas, params, fallbackRenderer) {
-        var wcAddon = require("webchimera.js");
-        
-        this._canvas = canvas;
-        
-        var vlc = wcAddon.createPlayer(params);
+        var vlc = require("webchimera.js").createPlayer(params);
     
-        if (typeof canvas === 'string') setupCanvas(window.document.querySelector(canvas), vlc, fallbackRenderer);
-        else setupCanvas(canvas, vlc, fallbackRenderer);
+        if(typeof canvas === 'string')
+            canvas = window.document.querySelector(canvas);
+
+        this._canvas = canvas;
+
+        setupCanvas(canvas, vlc, fallbackRenderer);
     
         vlc.onFrameSetup =
             function(width, height, pixelFormat) {
