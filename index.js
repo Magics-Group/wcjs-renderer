@@ -21,8 +21,7 @@ Texture.prototype.fill = function (width, height, data) {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, width, height, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, data);
 }
 
-function render(canvas, videoFrame, vlc) {
-    if (!vlc.playing) return;
+function render(canvas, videoFrame) {
     var gl = canvas.gl;
     var len = videoFrame.length;
     gl.y.fill(videoFrame.width, videoFrame.height,
@@ -173,7 +172,7 @@ module.exports = {
 
         vlc.onFrameReady =
             function(videoFrame) {
-                (canvas.gl ? render : renderFallback)(canvas, videoFrame, vlc);
+                (canvas.gl ? render : renderFallback)(canvas, videoFrame);
             };
         return vlc;
     },
