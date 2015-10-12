@@ -1,5 +1,5 @@
-# wcjs-renderer
-renderer for WebChimera.js
+# <img alt="WebChimera.js Renderer" src="https://cloud.githubusercontent.com/assets/1777923/10429394/d89b473c-7100-11e5-9f0e-14e7c1c36574.png">
+Renderer for WebChimera.js
 
 ### Prerequisites
 * [WebChimera.js prerequisites](https://github.com/RSATom/WebChimera.js#build-prerequisites)
