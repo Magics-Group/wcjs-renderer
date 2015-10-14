@@ -138,7 +138,7 @@ function frameSetup(canvas, width, height, pixelFormat) {
 
 module.exports = {
     init: function(canvas, params, fallbackRenderer) {
-        var vlc = require("webchimera.js").createPlayer(params);
+        var vlc = require("wcjs-prebuilt").createPlayer(params);
 
         var drawLoop, newFrame;
     
