@@ -1,4 +1,4 @@
-# <img alt="WebChimera.js Renderer" src="https://cloud.githubusercontent.com/assets/1777923/10429394/d89b473c-7100-11e5-9f0e-14e7c1c36574.png">
+# <img alt="WebChimera.js Renderer" src="https://raw.githubusercontent.com/jaruba/wcjs-logos/master/logos/small/wcjs-renderer.png">
 Renderer for WebChimera.js
 
 ### Prerequisites
