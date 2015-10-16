@@ -17,6 +17,6 @@
         "url" : "https://github.com/RSATom/wcjs-renderer"
     },
     "dependencies": {
-        "webchimera.js": "*"
+        "wcjs-prebuilt": "jaruba/wcjs-prebuilt"
     }
 }
