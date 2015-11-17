@@ -47,11 +47,14 @@ var renderFallback = function(canvas, videoFrame) {
     canvas.ctx.putImageData(canvas.img, 0, 0);
 }
 
-function setupCanvas(canvas, vlc, fallbackRenderer) {
-    if (!fallbackRenderer) canvas.gl = canvas.getContext("webgl"); // Comment this line out to test fallback
+function setupCanvas(canvas, vlc, options) {
+    if (!options.fallbackRenderer)
+        canvas.gl = canvas.getContext("webgl", {
+            preserveDrawingBuffer:      Boolean (options.preserveDrawingBuffer)
+        });
     var gl = canvas.gl;
-    if (!gl || fallbackRenderer) {
-        console.log(fallbackRenderer ? "Fallback renderer forced, not using WebGL" : "Unable to initialize WebGL, falling back to canvas rendering");
+    if (!gl || options.fallbackRenderer) {
+        console.log(options.fallbackRenderer ? "Fallback renderer forced, not using WebGL" : "Unable to initialize WebGL, falling back to canvas rendering");
         vlc.pixelFormat = vlc.RV32;
         canvas.ctx = canvas.getContext("2d");
         delete canvas.gl; // in case of fallback renderer
@@ -137,7 +140,16 @@ function frameSetup(canvas, width, height, pixelFormat) {
 }
 
 module.exports = {
-    init: function(canvas, params, fallbackRenderer) {
+    init: function(canvas, params) {
+        var options;
+        if (arguments.length > 2)
+            options = typeof arguments[2] === 'boolean' ?
+                { fallbackRenderer:arguments[2] }
+              : arguments[2]
+              ;
+        else
+            options = {};
+
         var vlc = require("webchimera.js").createPlayer(params);
 
         var drawLoop, newFrame;
@@ -147,7 +159,7 @@ module.exports = {
 
         this._canvas = canvas;
 
-        setupCanvas(canvas, vlc, fallbackRenderer);
+        setupCanvas(canvas, vlc, options);
 
         vlc.onFrameSetup =
             function(width, height, pixelFormat) {
@@ -172,7 +184,7 @@ module.exports = {
                 canvas.addEventListener("webglcontextrestored",
                     function(w,h,p) {
                         return function(event) {
-                            setupCanvas(canvas, vlc);
+                            setupCanvas(canvas, vlc, options);
                             frameSetup(canvas, w, h, p);
                             console.log("webgl context restored");
                         }
