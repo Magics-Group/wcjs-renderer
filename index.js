@@ -151,7 +151,7 @@ module.exports = {
         else
             options = {};
 
-        var vlc = require("wcjs-prebuilt").createPlayer(params);
+        var vlc = require("webchimera.js").createPlayer(params);
 
         var drawLoop, newFrame;
 
