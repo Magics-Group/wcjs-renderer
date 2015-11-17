@@ -47,11 +47,15 @@ var renderFallback = function(canvas, videoFrame) {
     canvas.ctx.putImageData(canvas.img, 0, 0);
 }
 
-function setupCanvas(canvas, vlc, fallbackRenderer) {
-    if (!fallbackRenderer) canvas.gl = canvas.getContext("webgl"); // Comment this line out to test fallback
+function setupCanvas(canvas, vlc, options) {
+    console.log ('canvas', options);
+    if (!options.fallbackRenderer)
+        canvas.gl = canvas.getContext("webgl", {
+            preserveDrawingBuffer:      Boolean (options.preserveDrawingBuffer)
+        });
     var gl = canvas.gl;
-    if (!gl || fallbackRenderer) {
-        console.log(fallbackRenderer ? "Fallback renderer forced, not using WebGL" : "Unable to initialize WebGL, falling back to canvas rendering");
+    if (!gl || options.fallbackRenderer) {
+        console.log(options.fallbackRenderer ? "Fallback renderer forced, not using WebGL" : "Unable to initialize WebGL, falling back to canvas rendering");
         vlc.pixelFormat = vlc.RV32;
         canvas.ctx = canvas.getContext("2d");
         delete canvas.gl; // in case of fallback renderer
@@ -128,7 +132,7 @@ function setupCanvas(canvas, vlc, fallbackRenderer) {
 function frameSetup(canvas, width, height, pixelFormat) {
     var gl = canvas.gl;
     canvas.width = width;
-    canvas.height = height; 
+    canvas.height = height;
     if (!gl) {
         canvas.img = canvas.ctx.createImageData(width, height);
         return;
@@ -137,25 +141,34 @@ function frameSetup(canvas, width, height, pixelFormat) {
 }
 
 module.exports = {
-    init: function(canvas, params, fallbackRenderer) {
-        var vlc = require("webchimera.js").createPlayer(params);
+    init: function(canvas, params) {
+        var options;
+        if (arguments.length > 2)
+            options = typeof arguments[2] === 'boolean' ?
+                { fallbackRenderer:arguments[2] }
+              : arguments[2]
+              ;
+        else
+            options = {};
+
+        var vlc = require("wcjs-prebuilt").createPlayer(params);
 
         var drawLoop, newFrame;
-    
+
         if(typeof canvas === 'string')
             canvas = window.document.querySelector(canvas);
 
         this._canvas = canvas;
 
-        setupCanvas(canvas, vlc, fallbackRenderer);
-    
+        setupCanvas(canvas, vlc, options);
+
         vlc.onFrameSetup =
             function(width, height, pixelFormat) {
                 frameSetup(canvas, width, height, pixelFormat);
-    
+
                 var draw = function() {
                     drawLoop = window.requestAnimationFrame(function() {
-                        var gl = canvas.gl; 
+                        var gl = canvas.gl;
                         if (newFrame) gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
                         newFrame = false;
                         draw();
@@ -168,16 +181,16 @@ module.exports = {
                         event.preventDefault();
                         console.log("webgl context lost");
                     }, false);
-    
+
                 canvas.addEventListener("webglcontextrestored",
                     function(w,h,p) {
                         return function(event) {
-                            setupCanvas(canvas, vlc);
+                            setupCanvas(canvas, vlc, options);
                             frameSetup(canvas, w, h, p);
                             console.log("webgl context restored");
                         }
                     }(width,height,pixelFormat), false);
-    
+
             };
 
         vlc.onFrameReady =
@@ -187,7 +200,7 @@ module.exports = {
             };
         vlc.onFrameCleanup =
             function() {
-                if (drawLoop) { window.cancelAnimationFrame(drawLoop); drawLoop = null; } 
+                if (drawLoop) { window.cancelAnimationFrame(drawLoop); drawLoop = null; }
             };
         return vlc;
     },
@@ -206,6 +219,6 @@ module.exports = {
 
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     },
-    
+
     _canvas: false
 };
