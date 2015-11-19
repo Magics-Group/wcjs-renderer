@@ -128,7 +128,7 @@ function setupCanvas(canvas, vlc, fallbackRenderer) {
 function frameSetup(canvas, width, height, pixelFormat) {
     var gl = canvas.gl;
     canvas.width = width;
-    canvas.height = height; 
+    canvas.height = height;
     if (!gl) {
         canvas.img = canvas.ctx.createImageData(width, height);
         return;
@@ -141,21 +141,21 @@ module.exports = {
         var vlc = require("webchimera.js").createPlayer(params);
 
         var drawLoop, newFrame;
-    
+
         if(typeof canvas === 'string')
             canvas = window.document.querySelector(canvas);
 
         this._canvas = canvas;
 
         setupCanvas(canvas, vlc, fallbackRenderer);
-    
+
         vlc.onFrameSetup =
             function(width, height, pixelFormat) {
                 frameSetup(canvas, width, height, pixelFormat);
-    
+
                 var draw = function() {
                     drawLoop = window.requestAnimationFrame(function() {
-                        var gl = canvas.gl; 
+                        var gl = canvas.gl;
                         if (newFrame) gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
                         newFrame = false;
                         draw();
@@ -168,7 +168,7 @@ module.exports = {
                         event.preventDefault();
                         console.log("webgl context lost");
                     }, false);
-    
+
                 canvas.addEventListener("webglcontextrestored",
                     function(w,h,p) {
                         return function(event) {
@@ -177,7 +177,7 @@ module.exports = {
                             console.log("webgl context restored");
                         }
                     }(width,height,pixelFormat), false);
-    
+
             };
 
         vlc.onFrameReady =
@@ -187,7 +187,7 @@ module.exports = {
             };
         vlc.onFrameCleanup =
             function() {
-                if (drawLoop) { window.cancelAnimationFrame(drawLoop); drawLoop = null; } 
+                if (drawLoop) { window.cancelAnimationFrame(drawLoop); drawLoop = null; }
             };
         return vlc;
     },
@@ -206,6 +206,6 @@ module.exports = {
 
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     },
-    
+
     _canvas: false
 };
