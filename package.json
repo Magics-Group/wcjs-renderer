@@ -1,7 +1,7 @@
 {
     "name": "wcjs-renderer",
     "description": "renderer for WebChimera.js",
-    "version": "0.1.8",
+    "version": "0.1.9",
     "license": "MIT",
     "author": "Sergey Radionov <rsatom@gmail.com>",
     "keywords": [
@@ -14,7 +14,7 @@
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/RSATom/wcjs-renderer"
+        "url": "https://github.com/Magics-Group/wcjs-renderer"
     },
     "optionalDependencies": {
         "webchimera.js": "latest"
