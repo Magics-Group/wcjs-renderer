@@ -142,17 +142,14 @@ function frameSetup(canvas, width, height, pixelFormat) {
 }
 
 module.exports = {
-    init: function(canvas, params, wcjs) {
-        
+    init: function(canvas, params, options, wcjs) {
+
         wcjs ? wcjs : require("webchimera.js");
 
-        var options;
-        if (arguments.length > 2)
-            options = typeof arguments[2] === 'boolean' ? {
-                fallbackRenderer: arguments[2]
-            } : arguments[2];
-        else
-            options = {};
+        options ? options : {
+            fallbackRenderer: false,
+            preserveDrawingBuffer: false
+        };
 
         var vlc = wcjs.createPlayer(params);
 
