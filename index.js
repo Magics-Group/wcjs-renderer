@@ -9,13 +9,13 @@ function Texture(gl) {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 }
-Texture.prototype.bind = function (n, program, name) {
+Texture.prototype.bind = function(n, program, name) {
     var gl = this.gl;
     gl.activeTexture([gl.TEXTURE0, gl.TEXTURE1, gl.TEXTURE2][n]);
     gl.bindTexture(gl.TEXTURE_2D, this.texture);
     gl.uniform1i(gl.getUniformLocation(program, name), n);
 }
-Texture.prototype.fill = function (width, height, data) {
+Texture.prototype.fill = function(width, height, data) {
     var gl = this.gl;
     gl.bindTexture(gl.TEXTURE_2D, this.texture);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, width, height, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, data);
@@ -24,11 +24,11 @@ Texture.prototype.fill = function (width, height, data) {
 function render(canvas, videoFrame) {
     var gl = canvas.gl;
     gl.y.fill(videoFrame.width, videoFrame.height,
-              videoFrame.subarray(0, videoFrame.uOffset));
+        videoFrame.subarray(0, videoFrame.uOffset));
     gl.u.fill(videoFrame.width >> 1, videoFrame.height >> 1,
-              videoFrame.subarray(videoFrame.uOffset, videoFrame.vOffset));
+        videoFrame.subarray(videoFrame.uOffset, videoFrame.vOffset));
     gl.v.fill(videoFrame.width >> 1, videoFrame.height >> 1,
-              videoFrame.subarray(videoFrame.vOffset, videoFrame.length));
+        videoFrame.subarray(videoFrame.vOffset, videoFrame.length));
 }
 
 var renderFallback = function(canvas, videoFrame) {
@@ -37,11 +37,11 @@ var renderFallback = function(canvas, videoFrame) {
     var height = videoFrame.height;
     for (var i = 0; i < height; ++i) {
         for (var j = 0; j < width; ++j) {
-            var o = (j + (width*i))*4;
-            buf[o + 0] = videoFrame[o+2];
-            buf[o + 1] = videoFrame[o+1];
-            buf[o + 2] = videoFrame[o+0];
-            buf[o + 3] = videoFrame[o+3];
+            var o = (j + (width * i)) * 4;
+            buf[o + 0] = videoFrame[o + 2];
+            buf[o + 1] = videoFrame[o + 1];
+            buf[o + 2] = videoFrame[o + 0];
+            buf[o + 3] = videoFrame[o + 3];
         }
     };
     canvas.ctx.putImageData(canvas.img, 0, 0);
@@ -50,7 +50,7 @@ var renderFallback = function(canvas, videoFrame) {
 function setupCanvas(canvas, vlc, options) {
     if (!options.fallbackRenderer)
         canvas.gl = canvas.getContext("webgl", {
-            preserveDrawingBuffer:      Boolean (options.preserveDrawingBuffer)
+            preserveDrawingBuffer: Boolean(options.preserveDrawingBuffer)
         });
     var gl = canvas.gl;
     if (!gl || options.fallbackRenderer) {
@@ -71,7 +71,8 @@ function setupCanvas(canvas, vlc, options) {
         "void main(void) {",
         " gl_Position = aVertexPosition;",
         " vTextureCoord = aTextureCoord;",
-        "}"].join("\n");
+        "}"
+    ].join("\n");
     var vertexShader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vertexShader, vertexShaderSource);
     gl.compileShader(vertexShader);
@@ -90,7 +91,8 @@ function setupCanvas(canvas, vlc, options) {
         ");",
         "void main(void) {",
         " gl_FragColor = vec4( texture2D(YTexture, vTextureCoord).x, texture2D(UTexture, vTextureCoord).x, texture2D(VTexture, vTextureCoord).x, 1) * YUV2RGB;",
-        "}"].join("\n");
+        "}"
+    ].join("\n");
 
     var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(fragmentShader, fragmentShaderSource);
@@ -99,7 +101,7 @@ function setupCanvas(canvas, vlc, options) {
     gl.attachShader(program, fragmentShader);
     gl.linkProgram(program);
     gl.useProgram(program);
-    if(!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
         console.log("Shader link failed.");
     }
     var vertexPositionAttribute = gl.getAttribLocation(program, "aVertexPosition");
@@ -110,14 +112,14 @@ function setupCanvas(canvas, vlc, options) {
     var verticesBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer);
     gl.bufferData(gl.ARRAY_BUFFER,
-                  new Float32Array([1.0, 1.0, 0.0, -1.0, 1.0, 0.0, 1.0, -1.0, 0.0, -1.0, -1.0, 0.0]),
-                  gl.STATIC_DRAW);
+        new Float32Array([1.0, 1.0, 0.0, -1.0, 1.0, 0.0, 1.0, -1.0, 0.0, -1.0, -1.0, 0.0]),
+        gl.STATIC_DRAW);
     gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
     var texCoordBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
     gl.bufferData(gl.ARRAY_BUFFER,
-                  new Float32Array([1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0]),
-                  gl.STATIC_DRAW);
+        new Float32Array([1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0]),
+        gl.STATIC_DRAW);
     gl.vertexAttribPointer(textureCoordAttribute, 2, gl.FLOAT, false, 0, 0);
 
     gl.y = new Texture(gl);
@@ -143,10 +145,9 @@ module.exports = {
     init: function(canvas, params) {
         var options;
         if (arguments.length > 2)
-            options = typeof arguments[2] === 'boolean' ?
-                { fallbackRenderer:arguments[2] }
-              : arguments[2]
-              ;
+            options = typeof arguments[2] === 'boolean' ? {
+                fallbackRenderer: arguments[2]
+            } : arguments[2];
         else
             options = {};
 
@@ -154,7 +155,7 @@ module.exports = {
 
         var drawLoop, newFrame;
 
-        if(typeof canvas === 'string')
+        if (typeof canvas === 'string')
             canvas = window.document.querySelector(canvas);
 
         this._canvas = canvas;
@@ -182,25 +183,28 @@ module.exports = {
                     }, false);
 
                 canvas.addEventListener("webglcontextrestored",
-                    function(w,h,p) {
+                    function(w, h, p) {
                         return function(event) {
                             setupCanvas(canvas, vlc, options);
                             frameSetup(canvas, w, h, p);
                             console.log("webgl context restored");
                         }
-                    }(width,height,pixelFormat), false);
+                    }(width, height, pixelFormat), false);
 
-            };
+        };
 
         vlc.onFrameReady =
             function(videoFrame) {
                 (canvas.gl ? render : renderFallback)(canvas, videoFrame);
                 newFrame = true;
-            };
+        };
         vlc.onFrameCleanup =
             function() {
-                if (drawLoop) { window.cancelAnimationFrame(drawLoop); drawLoop = null; }
-            };
+                if (drawLoop) {
+                    window.cancelAnimationFrame(drawLoop);
+                    drawLoop = null;
+                }
+        };
         return vlc;
     },
 
