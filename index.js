@@ -144,7 +144,7 @@ function frameSetup(canvas, width, height, pixelFormat) {
 module.exports = {
     init: function(canvas, params, options, wcjs) {
 
-        wcjs ? wcjs : require("webchimera.js");
+        wcjs = wcjs ? wcjs : require("webchimera.js");
 
         options ? options : {
             fallbackRenderer: false,
