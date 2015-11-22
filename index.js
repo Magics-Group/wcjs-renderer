@@ -146,10 +146,12 @@ module.exports = {
 
         wcjs = wcjs ? wcjs : require("webchimera.js");
 
-        options ? options : {
-            fallbackRenderer: false,
-            preserveDrawingBuffer: false
-        };
+        if( !options ) {
+            options = {
+                fallbackRenderer: false,
+                preserveDrawingBuffer: false
+            };
+        }
 
         var vlc = wcjs.createPlayer(params);
 
