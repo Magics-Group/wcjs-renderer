@@ -201,7 +201,6 @@ module.exports = {
                     drawLoop = null;
                 }
         };
-        return vlc;
     },
 
     clear: function(canvas) {
