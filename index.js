@@ -142,9 +142,7 @@ function frameSetup(canvas, width, height, pixelFormat) {
 }
 
 module.exports = {
-    init: function(canvas, params, options, wcjs) {
-
-        wcjs = wcjs ? wcjs : require("webchimera.js");
+    bind: function(canvas, vlc, options) {
 
         if( !options ) {
             options = {
@@ -153,14 +151,10 @@ module.exports = {
             };
         }
 
-        var vlc = wcjs.createPlayer(params);
-
         var drawLoop, newFrame;
 
         if (typeof canvas === 'string')
             canvas = window.document.querySelector(canvas);
-
-        this._canvas = canvas;
 
         setupCanvas(canvas, vlc, options);
 
@@ -207,11 +201,10 @@ module.exports = {
                     drawLoop = null;
                 }
         };
-        return vlc;
     },
 
-    clearCanvas: function() {
-        var gl = this._canvas.gl,
+    clear: function(canvas) {
+        var gl = canvas.gl,
             arr1 = new Uint8Array(1),
             arr2 = new Uint8Array(1);
 
@@ -223,7 +216,5 @@ module.exports = {
         gl.v.fill(1, 1, arr2);
 
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    },
-
-    _canvas: false
+    }
 };
