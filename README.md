@@ -13,15 +13,15 @@ npm install wcjs-renderer
 ### Usage example
 
 HTML:
-```
+```HTML
 <canvas id="canvas"/>
 ```
 JS:
-```
+```JavaScript
 var renderer = require("wcjs-renderer");
 var vlc = require("wcjs-prebuilt").createPlayer();
 var options = { /* Add renderer options here */ }
-renderer.init(document.getElementById("canvas"), vlc, options);
+renderer.bind(document.getElementById("canvas"), vlc, options);
 vlc.play("http://archive.org/download/CartoonClassics/Krazy_Kat_-_Keeping_Up_With_Krazy.mp4");
 ```
 
