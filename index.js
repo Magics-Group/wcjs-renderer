@@ -143,14 +143,6 @@ function frameSetup(canvas, width, height, pixelFormat) {
 
 module.exports = {
     bind: function(canvas, vlc, options) {
-
-        if( !options ) {
-            options = {
-                fallbackRenderer: false,
-                preserveDrawingBuffer: false
-            };
-        }
-
         var drawLoop, newFrame;
 
         if (typeof canvas === 'string')
@@ -161,6 +153,7 @@ module.exports = {
         vlc.onFrameSetup =
             function(width, height, pixelFormat) {
                 frameSetup(canvas, width, height, pixelFormat);
+                typeof options.onFrameSetup === "function" && options.onFrameSetup(width, height, pixelFormat);
 
                 var draw = function() {
                     drawLoop = window.requestAnimationFrame(function() {
