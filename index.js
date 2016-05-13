@@ -186,6 +186,7 @@ module.exports = {
             function(videoFrame) {
                 (canvas.gl ? render : renderFallback)(canvas, videoFrame);
                 newFrame = true;
+                typeof options.onFrameReady === "function" && options.onFrameReady(videoFrame);
         };
         vlc.onFrameCleanup =
             function() {
@@ -193,6 +194,7 @@ module.exports = {
                     window.cancelAnimationFrame(drawLoop);
                     drawLoop = null;
                 }
+                typeof options.onFrameCleanup === "function" && options.onFrameCleanup();
         };
     },
 
