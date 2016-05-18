@@ -27,9 +27,14 @@ vlc.play("http://archive.org/download/CartoonClassics/Krazy_Kat_-_Keeping_Up_Wit
 
 ### JavaScript API
 
-- ``bind(vlc, canvas, options)``: bind the Webchimera VLC player to a canvas element:
-    - ``canvas`` can be a DOM node or selector (mandatory) 
-    - ``vlc`` is a VLC player created with WebChimera.js (mandatory)
-    - ``options`` is a object mentioning if the fallback non-WebGL renderer should be used (optional),
+- `bind(vlc, canvas, options)`: bind the Webchimera VLC player to a canvas element:
+    - `canvas` can be a DOM node or selector (mandatory) 
+    - `vlc` is a VLC player created with WebChimera.js (mandatory)
+    - `options`:
+        - `fallbackRenderer` is a boolean mentioning if the fallback non-WebGL renderer should be used (optional, defaults to false),
+        - `preserveDrawingBuffer` is a boolean mentioning if we should preserve the drawing buffer (optional, defaults to false),
+        - `onFrameSetup` will be called when VLC's `onFrameSetup` callback is called, with the same arguments, after the canvas has been setup.
+        - `onFrameReady` will be called when VLC's `onFrameReady` callback is called, with the same arguments, after the frame has been rendered to the canvas.
+        - `onFrameCleanup` will be called when VLC's `onFrameCleanup` callback is called, with the same arguments, after the frame was cleaned up.
 
-- ``clear(canvas)``: draws a single black frame on a canvas element
+- `clear(canvas)`: draws a single black frame on a canvas element

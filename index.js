@@ -143,14 +143,6 @@ function frameSetup(canvas, width, height, pixelFormat) {
 
 module.exports = {
     bind: function(canvas, vlc, options) {
-
-        if( !options ) {
-            options = {
-                fallbackRenderer: false,
-                preserveDrawingBuffer: false
-            };
-        }
-
         var drawLoop, newFrame;
 
         if (typeof canvas === 'string')
@@ -161,11 +153,12 @@ module.exports = {
         vlc.onFrameSetup =
             function(width, height, pixelFormat) {
                 frameSetup(canvas, width, height, pixelFormat);
+                typeof options.onFrameSetup === "function" && options.onFrameSetup(width, height, pixelFormat);
 
                 var draw = function() {
                     drawLoop = window.requestAnimationFrame(function() {
                         var gl = canvas.gl;
-                        if (newFrame) gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+                        if (gl && newFrame) gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
                         newFrame = false;
                         draw();
                     });
@@ -193,6 +186,7 @@ module.exports = {
             function(videoFrame) {
                 (canvas.gl ? render : renderFallback)(canvas, videoFrame);
                 newFrame = true;
+                typeof options.onFrameReady === "function" && options.onFrameReady(videoFrame);
         };
         vlc.onFrameCleanup =
             function() {
@@ -200,6 +194,7 @@ module.exports = {
                     window.cancelAnimationFrame(drawLoop);
                     drawLoop = null;
                 }
+                typeof options.onFrameCleanup === "function" && options.onFrameCleanup();
         };
     },
 
