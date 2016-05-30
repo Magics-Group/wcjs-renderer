@@ -1,10 +1,4 @@
-var checkFPS = function() {
-    player.renderer.getFps(function(fps) {
-        console.log('fps is: ' + fps);
-        // is player playing?
-        if (player.vlc.state == 3) checkFps();
-    });
-}
+var fpsCount = 0;
 
 
 function Texture(gl) {
