@@ -1,3 +1,14 @@
+var fpsCount = 0;
+
+var checkFPS = function() {
+    player.renderer.getFps(function(fps) {
+        console.log('fps is: ' + fps);
+        // is player playing?
+        if (player.vlc.state == 3) checkFps();
+    });
+}
+
+
 function Texture(gl) {
     this.gl = gl;
     this.texture = gl.createTexture();
@@ -22,6 +33,7 @@ Texture.prototype.fill = function(width, height, data) {
 }
 
 function render(canvas, videoFrame) {
+    fpsCount++;
     var gl = canvas.gl;
     gl.y.fill(videoFrame.width, videoFrame.height,
         videoFrame.subarray(0, videoFrame.uOffset));
@@ -182,11 +194,11 @@ module.exports = {
 
         };
 
+        var that = this;
         vlc.onFrameReady =
             function(videoFrame) {
-                (canvas.gl ? render : renderFallback)(canvas, videoFrame);
+                  (canvas.gl ? render : renderFallback)(canvas, videoFrame, that.checkFps);
                 newFrame = true;
-                typeof options.onFrameReady === "function" && options.onFrameReady(videoFrame);
         };
         vlc.onFrameCleanup =
             function() {
@@ -197,7 +209,16 @@ module.exports = {
                 typeof options.onFrameCleanup === "function" && options.onFrameCleanup();
         };
     },
-
+    checkFps: false,
+    getFps: function(cb) {
+      this.checkFps = true;
+      var that = this;
+      setTimeout(function() {
+          that.checkFps = false;
+          cb(fpsCount);
+          fpsCount = 0;
+        },1000);
+    },
     clear: function(canvas) {
         var gl = canvas.gl,
             arr1 = new Uint8Array(1),
