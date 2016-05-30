@@ -1,4 +1,4 @@
-var fpsCount = 0;
+
 
 var checkFPS = function() {
     player.renderer.getFps(function(fps) {
