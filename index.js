@@ -1,5 +1,3 @@
-
-
 var checkFPS = function() {
     player.renderer.getFps(function(fps) {
         console.log('fps is: ' + fps);
