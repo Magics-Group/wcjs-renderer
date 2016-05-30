@@ -195,7 +195,7 @@ module.exports = {
         var that = this;
         vlc.onFrameReady =
             function(videoFrame) {
-                  (canvas.gl ? render : renderFallback)(canvas, videoFrame, that.checkFps);
+                (canvas.gl ? render : renderFallback)(canvas, videoFrame, that.checkFps);
                 newFrame = true;
         };
         vlc.onFrameCleanup =
