@@ -24,7 +24,7 @@ Texture.prototype.fill = function(width, height, data) {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, width, height, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, data);
 }
 
-function render(canvas, videoFrame) {
+function render(canvas, videoFrame, checkFps) {
     if (checkFps) fpsCount++;
     var gl = canvas.gl;
     gl.y.fill(videoFrame.width, videoFrame.height,
