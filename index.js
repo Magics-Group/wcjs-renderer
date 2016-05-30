@@ -31,7 +31,7 @@ Texture.prototype.fill = function(width, height, data) {
 }
 
 function render(canvas, videoFrame) {
-    fpsCount++;
+    if (checkFps) fpsCount++;
     var gl = canvas.gl;
     gl.y.fill(videoFrame.width, videoFrame.height,
         videoFrame.subarray(0, videoFrame.uOffset));
