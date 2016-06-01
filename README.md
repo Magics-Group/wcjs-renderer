@@ -37,4 +37,6 @@ vlc.play("http://archive.org/download/CartoonClassics/Krazy_Kat_-_Keeping_Up_Wit
         - `onFrameReady` will be called when VLC's `onFrameReady` callback is called, with the same arguments, after the frame has been rendered to the canvas.
         - `onFrameCleanup` will be called when VLC's `onFrameCleanup` callback is called, with the same arguments, after the frame was cleaned up.
 
-- `clear(canvas)`: draws a single black frame on a canvas element
+- `clear(canvas)`: draws a single black frame on a canvas element (it's recommended to clear the canvas when the `Media Changed` and `Ended` events are triggered)
+
+- `getFps(function)`: returns int in callback, the number of frames that wore rendered in 1 seconds after the request was made (useful for performance tests and getting the current fps of a live stream as it normally returns as `0` with the WebChimera.js native method, to note: even when playback is paused it still renders at 10 fps)
