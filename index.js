@@ -52,6 +52,7 @@ var renderFallback = function(canvas, videoFrame) {
 }
 
 function setupCanvas(canvas, vlc, options) {
+    if (!options) options = {};
     if (!options.fallbackRenderer)
         canvas.gl = canvas.getContext("webgl", {
             preserveDrawingBuffer: Boolean(options.preserveDrawingBuffer)
