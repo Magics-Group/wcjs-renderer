@@ -27,7 +27,7 @@ vlc.play("http://archive.org/download/CartoonClassics/Krazy_Kat_-_Keeping_Up_Wit
 
 ### JavaScript API
 
-- `bind(vlc, canvas, options)`: bind the Webchimera VLC player to a canvas element:
+- `bind(canvas, vlc options)`: bind the Webchimera VLC player to a canvas element:
     - `canvas` can be a DOM node or selector (mandatory) 
     - `vlc` is a VLC player created with WebChimera.js (mandatory)
     - `options`:
