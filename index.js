@@ -1,3 +1,6 @@
+var fpsCount = 0;
+
+
 function Texture(gl) {
     this.gl = gl;
     this.texture = gl.createTexture();
@@ -21,7 +24,8 @@ Texture.prototype.fill = function(width, height, data) {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, width, height, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, data);
 }
 
-function render(canvas, videoFrame) {
+function render(canvas, videoFrame, checkFps) {
+    if (checkFps) fpsCount++;
     var gl = canvas.gl;
     gl.y.fill(videoFrame.width, videoFrame.height,
         videoFrame.subarray(0, videoFrame.uOffset));
@@ -182,9 +186,10 @@ module.exports = {
 
         };
 
+        var that = this;
         vlc.onFrameReady =
             function(videoFrame) {
-                (canvas.gl ? render : renderFallback)(canvas, videoFrame);
+                (canvas.gl ? render : renderFallback)(canvas, videoFrame, that.checkFps);
                 newFrame = true;
                 typeof options.onFrameReady === "function" && options.onFrameReady(videoFrame);
         };
@@ -197,7 +202,16 @@ module.exports = {
                 typeof options.onFrameCleanup === "function" && options.onFrameCleanup();
         };
     },
-
+    checkFps: false,
+    getFps: function(cb) {
+      this.checkFps = true;
+      var that = this;
+      setTimeout(function() {
+          that.checkFps = false;
+          cb(fpsCount);
+          fpsCount = 0;
+        },1000);
+    },
     clear: function(canvas) {
         var gl = canvas.gl,
             arr1 = new Uint8Array(1),
